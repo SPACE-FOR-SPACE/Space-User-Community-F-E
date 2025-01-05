@@ -18,7 +18,6 @@ function PostContent({data}) {
     const [comment, setComment] = useState("");
     const [commentData, setCommentData] = useState([]);
     const queryClient = useQueryClient();
-
     const {mutate : deletePost} = useDeleteDocMutation(
         (res)=>{
             navigate('/');
@@ -110,7 +109,7 @@ function PostContent({data}) {
                                 }
                             </S.HeaderHead>
                             {/*<S.titleWrap><S.titleImg src={images[data.icon]}/><S.title>{data["title"]}</S.title></S.titleWrap>*/}
-                            <S.postInfo>{data["date"].slice(0, 10)} - {data["authorName"]}</S.postInfo>
+                            {/*<S.postInfo>{data["date"].slice(0, 10)} - {data["authorName"]}</S.postInfo>*/}
                         </S.Header>
                         <S.contents>{makeContent(data["content"])}</S.contents>
                         <S.hr/>

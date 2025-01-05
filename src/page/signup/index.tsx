@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {useRecoilValue} from "recoil";
 import {authAtom} from "../../recoil/authAtom";
 import BackArrow from "../../assets/back_Arrow.svg";
+import {SignupAPI, SendEmailAPI } from "../../api/signup";
 
 function Signup(){
     const [id, setId] = useState('');
@@ -22,69 +23,22 @@ function Signup(){
     }, [])
 
     const navigate = useNavigate();
-    const goSignup = async ()=>{
-        if(id === "" || pw === "" || repw === "" || age === "" || email === ""){
-            alert("데이터가 부족합니다.");
-        }
-        else if(pw !== repw){
-            alert("비밀번호가 일치하지 않습니다.");
-        }
-        else if(parseInt(age, 10) >= 80 || parseInt(age, 10) <= 3){
-            alert("나이가 정상적으로 입력되지 않습니다.");
-        }
+    const goSignup = async ()  =>{
+        if(id === "" || pw === "" || repw === "" || age === "" || email === "") alert("데이터가 부족합니다.");
+        else if(pw !== repw) alert("비밀번호가 일치하지 않습니다.");
+        else if(parseInt(age, 10) >= 80 || parseInt(age, 10) <= 3) alert("나이가 정상적으로 입력되지 않습니다.");
         else{
-            try{
-                const response = await fetch('/api/user/register', {
-                    method:'POST',
-                    headers:{
-                        'Content-Type':'application/json',
-                    },
-                    body:JSON.stringify({
-                        email: email,
-                        username: id,
-                        password: pw,
-                        age: age,
-                        token: valueNumber
-                    }),
-                });
-                if(response.status === 201){
-                    console.log("회원가입성공");
-                    navigate('/login');
-                }
-                else if(response.status === 409){
-                    alert("이미 등록되어있는 이메일입니다.");
-                }
-            }catch(error){
-                console.log("error on ", error);
-            }
+            const res = await SignupAPI({ id, pw, age, email });
+            if(res && res.status === 200) navigate('/login');
         }
     }
     const postEmail = async ()=>{
-        try{
-            const res = await fetch('/api/user/sendEmail', {
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json',
-                },
-                credentials:'include',
-                body:JSON.stringify({
-                    email: email
-                }),
-            });
-            if (res.ok) {
-                alert('이메일발송중...');
-            }
-        }catch(error){
-            console.log("error on postEmail", error);
-        }
+        const res = await SendEmailAPI({email});
+        if(res && res.status === 200) alert('이메일발송중...');
     }
     const check = () => {
-        if(pw.length >= 4){
-            setIsOn(false);
-        }
-        else{
-            setIsOn(true);
-        }
+        if(pw.length >= 4) setIsOn(false);
+        else setIsOn(true);
     }
     return(
         <S.container>
